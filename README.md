@@ -1,4 +1,4 @@
-# Code for "Optimal Transport Kernels for Sequential and Parallel Neural Architecture Search" submitted to AISTATS2021
+# Code for "Optimal Transport Kernels for Sequential and Parallel Neural Architecture Search" at ICML2021
 
 ## Requirements
 - tensorflow == 1.14.0
