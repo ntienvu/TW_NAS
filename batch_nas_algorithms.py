@@ -26,7 +26,8 @@ def run_batch_nas_algorithm(search_space,algo_params):
 
     # run nas algorithm
     ps = copy.deepcopy(algo_params)
-    algo_name = ps['algo_name']
+    #algo_name = ps['algo_name']
+    algo_name = ps.pop('algo_name')
 
     if algo_name == 'random':
         data = random_search(search_space, **ps)
@@ -118,6 +119,7 @@ def evolution_search(search_space,
                         mutation_rate=1.0, 
                         allow_isomorphisms=False,
                         deterministic=True,
+                        batch_size=5,
                         verbose=1):
     """
     regularized evolution

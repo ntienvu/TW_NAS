@@ -41,11 +41,11 @@ def algo_params_batch(param_str):
 
     if param_str == 'main_experiments':
         #params.append({'algo_name':'random', 'total_queries':500})
-        params.append({'algo_name':'evolution', 'total_queries':500})
+        #params.append({'algo_name':'evolution', 'total_queries':500, 'batch_size':5})
 
 
-        params.append({'algo_name':'gp_kdpp', 'batch_size':5, 'num_init':50,
-                       'total_queries':150,'distance':'edit_distance'}) 
+        # params.append({'algo_name':'gp_kdpp', 'batch_size':5, 'num_init':50,
+        #                'total_queries':150,'distance':'edit_distance'}) 
 
        # params.append({'algo_name':'gp_kdpp_rand', 'batch_size':10, 'num_init':50,
        #                'total_queries':150,'distance':'tw_distance'})  

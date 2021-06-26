@@ -3,6 +3,7 @@
 ## Requirements
 - tensorflow == 1.14.0
 - pytorch == 1.2.0, torchvision == 0.4.0
+- pot == 0.7 https://pythonot.github.io/# 
 - matplotlib, jupyter
 - nasbench101 (follow the installation instructions [here](https://github.com/google-research/nasbench))
 - nasbench201 (follow the installation instructions [here](https://github.com/D-X-Y/NAS-Bench-201))

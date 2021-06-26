@@ -19,10 +19,14 @@ class Data:
             try:
                 self.nasbench = api.NASBench('../nasbench_only108.tfrecord')
             except:
-                self.nasbench = api.NASBench('nasbench_only108.tfrecord')
+                self.nasbench = api.NASBench('../../nasbench_only108.tfrecord')
         if search_space == 'nasbench201':
+            try:
+                self.nasbench = api.NASBench('../../NAS-Bench-201-v1_0-e61699.pth')
+            except:
+                self.nasbench = api.NASBench('NAS-Bench-201-v1_0-e61699.pth')
 #            self.nasbench = api.NASBench('../../NAS-Bench-201-v1_0-e61699.pth')
-            self.nasbench = api.NASBench('NAS-Bench-201-v1_0-e61699.pth')
+            #self.nasbench = api.NASBench('NAS-Bench-201-v1_0-e61699.pth')
             
         if search_space == 'nasbench_full':
             self.nasbench = api.NASBench('nasbench.tfrecord')

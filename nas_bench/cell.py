@@ -239,8 +239,8 @@ class Cell:
         MX=self.matrix
         MY=other.matrix
         
-        opX=self.get_1gram_count_vector(MX,self.ops)
-        opY=self.get_1gram_count_vector(MY,other.ops)
+        opX=self.get_1gram_count_vector(MX,self.ops,self.OPS)
+        opY=self.get_1gram_count_vector(MY,other.ops,self.OPS)
         
         Mcost = np.asarray([[0,0.2,MAXVAL],[0.2,0,MAXVAL],[MAXVAL,MAXVAL,0]])
         # from Table 1 in https://arxiv.org/pdf/1802.07191.pdf
