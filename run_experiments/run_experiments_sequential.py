@@ -95,7 +95,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Args for Tree-Wasserstein and k-DPP quality experiments')
     parser.add_argument('--from_trials', type=int, default=0, help='Starting trials index')
     parser.add_argument('--to_trials', type=int, default=30, help='Ending trials index')
-    parser.add_argument('--search_space', type=str, default='nasbench', \
+    parser.add_argument('--search_space', type=str, default='nasbench201', \
         help='nasbench or nasbench201')
     parser.add_argument('--algo_params', type=str, default='main_experiments', help='which parameters to use')
     parser.add_argument('--output_filename', type=str, default='cifar100_200iters_v2b', help='name of output files')

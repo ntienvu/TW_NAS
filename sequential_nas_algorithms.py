@@ -9,8 +9,8 @@ import tensorflow as tf
 from argparse import Namespace
 
 from data import Data
-#from acquisition_functions import acq_fn
-#from meta_neural_net import MetaNeuralnet
+from acquisition_functions import acq_fn
+from meta_neural_net import MetaNeuralnet
 #from bo.bo.probo import ProBO
 #from bo.dom.list import ListDomain
 from bo.pp.pp_gp_my_distmat import MyGpDistmatPP
@@ -209,7 +209,12 @@ def bananas(search_space, metann_params,
         train_error = 0
         for _ in range(num_ensemble):
             meta_neuralnet = MetaNeuralnet()
-            train_error += meta_neuralnet.fit(xtrain, ytrain, **metann_params)
+            
+            ps = copy.deepcopy(metann_params)
+            _ = ps.pop('search_space')
+
+            #train_error += meta_neuralnet.fit(xtrain, ytrain, **metann_params)
+            train_error += meta_neuralnet.fit(xtrain, ytrain, **ps)
 
             # predict the validation loss of the candidate architectures
             predictions.append(np.squeeze(meta_neuralnet.predict(xcandidates)))
@@ -258,7 +263,7 @@ def optimize_GP_hyper(myGP,xtrain,ytrain,distance):
         newls=myGP.optimise_gp_hyperparameter_v3(xtrain,ytrain,alpha=1,sigma=1e-4)
         #mu_train,sig_train=myGP.gp_post_v3(xtrain,ytrain,xtrain,ls=newls,alpha=1,sigma=1e-4)
         #mu_test,sig_test=myGP.gp_post_v3(xtrain,ytrain,xtest,ls=newls,alpha=1,sigma=1e-4)
-    elif distance=="tw_2_distance":
+    elif distance=="tw_2g_distance":
         newls=myGP.optimise_gp_hyperparameter_v2(xtrain,ytrain,alpha=1,sigma=1e-4)
         #mu_train,sig_train=myGP.gp_post_v3(xtrain,ytrain,xtrain,ls=newls,alpha=1,sigma=1e-4)
         #mu_test,sig_test=myGP.gp_post_v3(xtrain,ytrain,xtest,ls=newls,alpha=1,sigma=1e-4)
