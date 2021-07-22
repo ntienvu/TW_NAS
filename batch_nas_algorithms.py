@@ -255,7 +255,7 @@ def optimize_GP_hyper(myGP,xtrain,ytrain,distance):
         newls=myGP.optimise_gp_hyperparameter_v3(xtrain,ytrain,alpha=1,sigma=1e-4)
         #mu_train,sig_train=myGP.gp_post_v3(xtrain,ytrain,xtrain,ls=newls,alpha=1,sigma=1e-4)
         #mu_test,sig_test=myGP.gp_post_v3(xtrain,ytrain,xtest,ls=newls,alpha=1,sigma=1e-4)
-    elif distance=="tw_2_distance":
+    elif distance=="tw_2_distance" or distance=="tw_2g_distance":
         newls=myGP.optimise_gp_hyperparameter_v2(xtrain,ytrain,alpha=1,sigma=1e-4)
         #mu_train,sig_train=myGP.gp_post_v3(xtrain,ytrain,xtrain,ls=newls,alpha=1,sigma=1e-4)
         #mu_test,sig_test=myGP.gp_post_v3(xtrain,ytrain,xtest,ls=newls,alpha=1,sigma=1e-4)

@@ -3,7 +3,7 @@ import copy
 import itertools
 import random
 import ot
-from nasbench import api
+from nasbench import api as nb101_api
 import time
 from scipy.sparse.csgraph import shortest_path
 
@@ -40,7 +40,7 @@ class Cell:
         }
 
     def modelspec(self):
-        return api.ModelSpec(matrix=self.matrix, ops=self.ops)
+        return nb101_api.ModelSpec(matrix=self.matrix, ops=self.ops)
 
     @classmethod
     def random_cell(cls, nasbench):
@@ -67,7 +67,7 @@ class Cell:
             ops = np.random.choice(OPS, size=NUM_VERTICES).tolist()
             ops[0] = INPUT
             ops[-1] = OUTPUT
-            spec = api.ModelSpec(matrix=matrix, ops=ops)
+            spec = nb101_api.ModelSpec(matrix=matrix, ops=ops)
             if nasbench.is_valid(spec):
                 return {
                     'matrix': matrix,
@@ -77,14 +77,14 @@ class Cell:
     def get_val_loss(self, nasbench, deterministic=1, patience=50):
         if not deterministic:
             # output one of the three validation accuracies at random
-            return (100*(1 - nasbench.query(api.ModelSpec(matrix=self.matrix, ops=self.ops))['validation_accuracy']))
+            return (100*(1 - nasbench.query(nb101_api.ModelSpec(matrix=self.matrix, ops=self.ops))['validation_accuracy']))
         else:        
             # query the api until we see all three accuracies, then average them
             # a few architectures only have two accuracies, so we use patience to avoid an infinite loop
             accs = []
             while len(accs) < 3 and patience > 0:
                 patience -= 1
-                acc = nasbench.query(api.ModelSpec(matrix=self.matrix, ops=self.ops))['validation_accuracy']
+                acc = nasbench.query(nb101_api.ModelSpec(matrix=self.matrix, ops=self.ops))['validation_accuracy']
                 if acc not in accs:
                     accs.append(acc)
             return round(100*(1-np.mean(accs)), 3)            
@@ -98,7 +98,7 @@ class Cell:
         accs = []
         while len(accs) < 3 and patience > 0:
             patience -= 1
-            acc = nasbench.query(api.ModelSpec(matrix=self.matrix, ops=self.ops))['test_accuracy']
+            acc = nasbench.query(nb101_api.ModelSpec(matrix=self.matrix, ops=self.ops))['test_accuracy']
             if acc not in accs:
                 accs.append(acc)
         return round(100*(1-np.mean(accs)), 3)
@@ -121,7 +121,7 @@ class Cell:
                         available = [op for op in self.OPS if op != new_ops[ind]]
                         new_ops[ind] = np.random.choice(available)
 
-                new_spec = api.ModelSpec(new_matrix, new_ops)
+                new_spec = nb101_api.ModelSpec(new_matrix, new_ops)
                 if nasbench.is_valid(new_spec):
                     break
         return {
@@ -150,7 +150,7 @@ class Cell:
                     available = [o for o in self.OPS if o != new_ops[ind]]
                     new_ops[ind] = random.choice(available)
 
-            new_spec = api.ModelSpec(new_matrix, new_ops)
+            new_spec = nb101_api.ModelSpec(new_matrix, new_ops)
             if nasbench.is_valid(new_spec):
                 return {
                     'matrix': new_matrix,
@@ -465,9 +465,9 @@ class Cell:
 class Cell_NB201(Cell):
 
     def __init__(self, matrix, ops):
-        #self.dataset='cifar100'
+        self.dataset='cifar100'
         #self.dataset='ImageNet16-120'
-        self.dataset='cifar10'
+        #self.dataset='cifar10'
         self.matrix = matrix
         self.ops = ops
         self.matrix = matrix

@@ -43,8 +43,8 @@ def algo_params_batch(param_str):
 
        # params.append({'algo_name':'gp_kdpp_rand', 'batch_size':10, 'num_init':50,
        #                'total_queries':150,'distance':'tw_distance'})  
-        params.append({'algo_name':'gp_ts', 'batch_size':5, 'num_init':50,
-                      'total_queries':150,'distance':'tw_distance'})  
+        # params.append({'algo_name':'gp_ts', 'batch_size':5, 'num_init':50,
+        #               'total_queries':150,'distance':'tw_distance'})  
        
         params.append({'algo_name':'gp_bucb','batch_size':5, 'num_init':50,
                        'total_queries':150,'distance':'tw_2g_distance'}) 

@@ -1,9 +1,10 @@
 import numpy as np
 import pickle
 import sys
-from nasbench import api
+from nasbench import api as nb101_api
 from nas_bench.cell import Cell,Cell_NB201
 
+from nas_201_api import NASBench201API as API
 
 
 mysearchspace='A'
@@ -17,19 +18,19 @@ class Data:
 
         if search_space == 'nasbench':
             try:
-                self.nasbench = api.NASBench('../nasbench_only108.tfrecord')
+                self.nasbench = nb101_api.NASBench('../nasbench_only108.tfrecord')
             except:
-                self.nasbench = api.NASBench('../../nasbench_only108.tfrecord')
+                self.nasbench = nb101_api.NASBench('../../nasbench_only108.tfrecord')
         if search_space == 'nasbench201':
             try:
-                self.nasbench = api.NASBench('../../NAS-Bench-201-v1_0-e61699.pth')
+                self.nasbench = API('../NAS-Bench-201-v1_0-e61699.pth')
             except:
-                self.nasbench = api.NASBench('NAS-Bench-201-v1_0-e61699.pth')
+                self.nasbench = API('../NAS-Bench-201-v1_0-e61699.pth')
 #            self.nasbench = api.NASBench('../../NAS-Bench-201-v1_0-e61699.pth')
             #self.nasbench = api.NASBench('NAS-Bench-201-v1_0-e61699.pth')
             
         if search_space == 'nasbench_full':
-            self.nasbench = api.NASBench('nasbench.tfrecord')
+            self.nasbench = nb101_api.NASBench('nasbench.tfrecord')
 
     def get_type(self):
         return self.search_space
