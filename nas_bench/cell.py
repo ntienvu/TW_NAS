@@ -465,9 +465,9 @@ class Cell:
 class Cell_NB201(Cell):
 
     def __init__(self, matrix, ops):
-        self.dataset='cifar100'
+        #self.dataset='cifar100'
         #self.dataset='ImageNet16-120'
-        #self.dataset='cifar10'
+        self.dataset='cifar10'
         self.matrix = matrix
         self.ops = ops
         self.matrix = matrix
@@ -583,7 +583,8 @@ class Cell_NB201(Cell):
         #index = nasbench.query_index_by_arch(mystr)
 
         results = nasbench.query_by_index(index, self.dataset) # a dict of all trials for 1st net on cifar100, where the key is the seed
-        results=results[888]
+        #results=results[888]
+        results=results[111]
         
         try:
             accuracy=np.round(results.get_eval('x-valid')['accuracy'],decimals=4)
@@ -602,7 +603,8 @@ class Cell_NB201(Cell):
         ss_query=self.Nas201_OpsMatrix_To_String(self.ops,self.matrix)
         index = nasbench.query_index_by_arch(ss_query)
         results = nasbench.query_by_index(index, self.dataset) # a dict of all trials for 1st net on cifar100, where the key is the seed
-        results=results[888]
+        #results=results[888]
+        results=results[111]
 
         try:
             accuracy=np.round(results.get_eval('x-test')['accuracy'],decimals=4)

@@ -23,9 +23,9 @@ class Data:
                 self.nasbench = nb101_api.NASBench('../../nasbench_only108.tfrecord')
         if search_space == 'nasbench201':
             try:
-                self.nasbench = API('../NAS-Bench-201-v1_0-e61699.pth')
+                self.nasbench = API('../NAS-Bench-201-v1_1-096897.pth')
             except:
-                self.nasbench = API('../NAS-Bench-201-v1_0-e61699.pth')
+                self.nasbench = API('NAS-Bench-201-v1_1-096897.pth')#e61699
 #            self.nasbench = api.NASBench('../../NAS-Bench-201-v1_0-e61699.pth')
             #self.nasbench = api.NASBench('NAS-Bench-201-v1_0-e61699.pth')
             
