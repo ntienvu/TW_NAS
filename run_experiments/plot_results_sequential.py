@@ -118,7 +118,7 @@ for search_space in search_space_list:
     plt.xlabel('Iterations',fontsize=16)
     
     
-    plt.title(search_space,fontsize=20)
+    plt.title("Seq NAS: "+search_space,fontsize=20)
     
         
     if search_space=='nasbench':

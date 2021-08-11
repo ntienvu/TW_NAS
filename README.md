@@ -52,17 +52,15 @@ python plot_result_batch.py
 
 Examples of the results over 5 independent runs.
 
-<img src="./run_experiments/fig/batch_nasbench201_cifar10.png" width="200" height="200" /> <img src="./run_experiments/fig/batch_nasbench201_cifar100.png" width="200" height="200" />
+## Parallel NAS
+
+<img src="./run_experiments/fig/batch_nasbench201_cifar10.png" width="250" height="250" /> <img src="./run_experiments/fig/batch_nasbench201_cifar100.png" width="250" height="250" />
+<img src="./run_experiments/fig/batch_nasbench201_ImageNet16-120.png" width="250" height="250" /> <img src="./run_experiments/fig/batch_nasbench.png" width="250" height="250" />
+
+## Sequential NAS
+<img src="./run_experiments/fig/sequential_nasbench201_cifar10.png" width="250" height="250" /> <img src="./run_experiments/fig/sequential_nasbench201_cifar100.png" width="250" height="250" />
 
 
-![plot](./run_experiments/fig/batch_nasbench201_cifar10.png)
-![plot](./run_experiments/fig/batch_nasbench201_cifar100.png)
-![plot](./run_experiments/fig/batch_nasbench201_ImageNet16-120.png)
-![plot](./run_experiments/fig/batch_nasbench.png)
-
-![plot](./run_experiments/fig/sequential_nasbench201_cifar10.png)
-![plot](./run_experiments/fig/sequential_nasbench201_cifar100.png)
-![plot](./run_experiments/fig/sequential_nasbench201_ImageNet16-120.png)
 
 # Paper and Presentation
 ```

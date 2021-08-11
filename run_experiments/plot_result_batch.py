@@ -102,7 +102,7 @@ for search_space in search_space_list:
     plt.xlabel('Iterations',fontsize=16)
     
         
-    plt.title(search_space,fontsize=20)
+    plt.title("Parallel NAS: "+search_space,fontsize=20)
 
 
     if search_space=='nasbench':
@@ -110,11 +110,11 @@ for search_space in search_space_list:
     
     else: # nasbench201
         if 'cifar100' in search_space:
-            plt.ylim([38.5,43])    
+            plt.ylim([38.5,42])    
         elif 'cifar10' in search_space:
-            plt.ylim([10.8,14])    
+            plt.ylim([10.8,13])    
         elif 'ImageNet16-120' in search_space:
-            plt.ylim([62,67])    
+            plt.ylim([62,66])    
 
     strFile="fig/batch_{:s}.png".format(search_space)
     print(strFile)
