@@ -22,7 +22,9 @@ To customize your experiment (select algorithm and number of iteration including
 ```
 python run_experiments/run_experiments_sequential.py
 python run_experiments_sequential.py --search_space nasbench
-python run_experiments_sequential.py --search_space nasbench201 --dataset_nb201 cifar10 %Note that we can select cifar10 / cifar100 / ImageNet16-120
+python run_experiments_sequential.py --search_space nasbench201_cifar10
+python run_experiments_sequential.py --search_space nasbench201_cifar100
+python run_experiments_sequential.py --search_space nasbench201_ImageNet16-120
 ```
 
 This will run the sequential NAS setting including the BO algorithm against several other sequential NAS algorithms on the NASBench101 search space.
@@ -34,7 +36,9 @@ To customize your experiment (select algorithm and number of iteration including
 ```
 python run_experiments/run_experiments_batch.py
 python run_experiments_batch.py --search_space nasbench
-python run_experiments_batch.py --search_space nasbench201 --dataset_nb201 cifar10 %Note that we can select cifar10 / cifar100 / ImageNet16-120
+python run_experiments_batch.py --search_space nasbench201_cifar10
+python run_experiments_batch.py --search_space nasbench201_cifar100
+python run_experiments_batch.py --search_space nasbench201_ImageNet16-120
 ```
 This will run the batch NAS setting including the k-DPP quality algorithm against several other batch baseline algorithms on the NASBench201 search space.
 
@@ -48,15 +52,14 @@ python plot_result_batch.py
 
 Examples of the results over 5 independent runs.
 
-![plot](./run_experiments/fig/batch_nasbench201_cifar10.png)
-![plot](./run_experiments/fig/batch_nasbench201_cifar100.png)
-![plot](./run_experiments/fig/batch_nasbench201_ImageNet16-120.png)
-![plot](./run_experiments/fig/batch_nasbench.png)
+![plot](./run_experiments/fig/batch_nasbench201_cifar10.png){:height="50%" width="50%"}
+![plot](./run_experiments/fig/batch_nasbench201_cifar100.png){:height="50%" width="50%"}
+![plot](./run_experiments/fig/batch_nasbench201_ImageNet16-120.png){:height="50%" width="50%"}
+![plot](./run_experiments/fig/batch_nasbench.png){:height="50%" width="50%"}
 
-![plot](./run_experiments/fig/sequential_nasbench201_cifar10.png)
-![plot](./run_experiments/fig/sequential_nasbench201_cifar100.png)
-![plot](./run_experiments/fig/sequential_nasbench201_ImageNet16-120.png)
-![plot](./run_experiments/fig/sequential_nasbench.png)
+![plot](./run_experiments/fig/sequential_nasbench201_cifar10.png){:height="50%" width="50%"}
+![plot](./run_experiments/fig/sequential_nasbench201_cifar100.png){:height="50%" width="50%"}
+![plot](./run_experiments/fig/sequential_nasbench201_ImageNet16-120.png){:height="50%" width="50%"}
 
 # Paper and Presentation
 ```
@@ -66,6 +69,18 @@ https://arxiv.org/pdf/2006.07593.pdf
 # Reference
 ```
 Vu Nguyen*, Tam Le*, Makoto Yamada, Michael A. Osborne.  "Optimal Transport Kernels for Sequential and Parallel Neural Architecture Search." International Conference on Machine Learning (ICML), 2021.
+```
+
+
+```
+@inproceedings{nguyen2021optimal,
+  title={Optimal transport kernels for sequential and parallel neural architecture search},
+  author={Nguyen, Vu and Le, Tam and Yamada, Makoto and Osborne, Michael A},
+  booktitle={International Conference on Machine Learning},
+  pages={8084--8095},
+  year={2021},
+  organization={PMLR}
+}
 ```
 
 

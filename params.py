@@ -10,12 +10,12 @@ def algo_params_seq(param_str):
 
     if param_str == 'main_experiments':
 
-        #params.append({'algo_name':'random','total_queries':200})
-        #params.append({'algo_name': 'evolution', 'num_init':20,'total_queries':200})
+        params.append({'algo_name':'random','total_queries':200})
+        params.append({'algo_name': 'evolution', 'num_init':20,'total_queries':200})
         
-        #params.append({'algo_name':'gp_bayesopt',  'num_init':20,'total_queries':200,'distance':'tw_distance'})  
+        params.append({'algo_name':'gp_bayesopt',  'num_init':20,'total_queries':200,'distance':'tw_distance'})  
         params.append({'algo_name':'gp_bayesopt',  'num_init':20,'total_queries':200,'distance':'tw_2g_distance'})  
-        #params.append({'algo_name':'bananas', 'num_init':20, 'total_queries':200})   
+        params.append({'algo_name':'bananas', 'num_init':20, 'total_queries':200})   
 
     else:
         print('invalid algorithm params')
