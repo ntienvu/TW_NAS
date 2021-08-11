@@ -55,10 +55,11 @@ Examples of the results over 5 independent runs.
 ## Parallel NAS
 
 <img src="./run_experiments/fig/batch_nasbench201_cifar10.png" width="250" height="250" /> <img src="./run_experiments/fig/batch_nasbench201_cifar100.png" width="250" height="250" />
+
 <img src="./run_experiments/fig/batch_nasbench201_ImageNet16-120.png" width="250" height="250" /> <img src="./run_experiments/fig/batch_nasbench.png" width="250" height="250" />
 
 ## Sequential NAS
-<img src="./run_experiments/fig/sequential_nasbench201_cifar10.png" width="250" height="250" /> <img src="./run_experiments/fig/sequential_nasbench201_cifar100.png" width="250" height="250" />
+<img src="./run_experiments/fig/sequential_nasbench201_cifar10.png" width="250" height="250" /> <img src="./run_experiments/fig/sequential_nasbench201_cifar100.png" width="250" height="250" /> <img src="./run_experiments/fig/sequential_nasbench201_ImageNet16-120.png" width="250" height="250" />
 
 
 
