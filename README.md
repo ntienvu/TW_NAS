@@ -46,9 +46,17 @@ python plot_result_sequential.py
 python plot_result_batch.py
 ```
 
-![plot](./run_experiments/fig/batch_cifar10.png)
-![plot](./run_experiments/fig/batch_cifar100.png)
-![plot](./run_experiments/fig/batch_ImageNet16-120.png)
+Examples of the results over 5 independent runs.
+
+![plot](./run_experiments/fig/batch_nasbench201_cifar10.png)
+![plot](./run_experiments/fig/batch_nasbench201_cifar100.png)
+![plot](./run_experiments/fig/batch_nasbench201_ImageNet16-120.png)
+![plot](./run_experiments/fig/batch_nasbench.png)
+
+![plot](./run_experiments/fig/sequential_nasbench201_cifar10.png)
+![plot](./run_experiments/fig/sequential_nasbench201_cifar100.png)
+![plot](./run_experiments/fig/sequential_nasbench201_ImageNet16-120.png)
+![plot](./run_experiments/fig/sequential_nasbench.png)
 
 # Paper and Presentation
 ```
