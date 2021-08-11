@@ -46,6 +46,10 @@ python plot_result_sequential.py
 python plot_result_batch.py
 ```
 
+![plot](./run_experiments/fig/batch_cifar10.png)
+![plot](./run_experiments/fig/batch_cifar100.png)
+![plot](./run_experiments/fig/batch_ImageNet16-120.png)
+
 # Paper and Presentation
 ```
 https://arxiv.org/pdf/2006.07593.pdf
