@@ -1,14 +1,10 @@
 import sys
 sys.path.insert(0,'..')
 
-import itertools
-import os
 import pickle
 import sys
 import copy
 import numpy as np
-import random
-import tensorflow as tf
 from argparse import Namespace
 
 from data import Data
@@ -26,13 +22,15 @@ def run_batch_nas_algorithm(search_space,algo_params):
 
     # run nas algorithm
     ps = copy.deepcopy(algo_params)
-    #algo_name = ps['algo_name']
-    algo_name = ps.pop('algo_name')
-
+    algo_name = ps['algo_name']
+    #algo_name = ps.pop('algo_name')
+    
     if algo_name == 'random':
+        ps.pop('algo_name')
+        ps.pop('batch_size')
+
         data = random_search(search_space, **ps)
-    elif algo_name == 'evolution':
-        data = evolution_search(search_space, **ps)
+  
     elif "gp" in algo_name:
         data = gp_batch_bayesopt_search(search_space, **ps)
     else:
@@ -110,113 +108,15 @@ def random_search(search_space,
     return data
 
 
-def evolution_search(search_space,
-                        num_init=10,
-                        k=10,
-                        population_size=50,
-                        total_queries=100,
-                        tournament_size=10,
-                        mutation_rate=1.0, 
-                        allow_isomorphisms=False,
-                        deterministic=True,
-                        batch_size=5,
-                        verbose=1):
-    """
-    regularized evolution
-    """
-    
-    data = search_space.generate_random_dataset(num=num_init, 
-                                                allow_isomorphisms=allow_isomorphisms,
-                                                deterministic_loss=deterministic)
-    val_losses = [d[2] for d in data]
-    query = num_init
-
-    if num_init <= population_size:
-        population = [i for i in range(num_init)]
-    else:
-        population = np.argsort(val_losses)[:population_size]
-
-    while query <= total_queries:
-
-        # evolve the population by mutating the best architecture
-        # from a random subset of the population
-        sample = random.sample(population, tournament_size)
-        best_index = sorted([(i, val_losses[i]) for i in sample], key=lambda i:i[1])[0][0]
-        mutated = search_space.mutate_arch(data[best_index][0], mutation_rate)
-        #permuted = search_space.perturb_arch(data[best_index][0])
-
-        archtuple = search_space.query_arch(mutated, deterministic=deterministic)
-        
-        data.append(archtuple)
-        val_losses.append(archtuple[2])
-        population.append(len(data) - 1)
-
-        # kill the worst from the population
-        if len(population) >= population_size:
-            worst_index = sorted([(i, val_losses[i]) for i in population], key=lambda i:i[1])[-1][0]
-            population.remove(worst_index)
-
-        if verbose and (query % k == 0):
-            top_5_loss = sorted([d[2] for d in data])[:min(5, len(data))]
-            print('Query {}, top 5 val losses {}'.format(query, top_5_loss))
-
-        query += 1
-
-    return data
-
-def GP_ThompsonSampling(myGP,xtrain,ytrain,xtest,modelp,newls,batch_size=5):
-
-    localGP=copy.deepcopy(myGP)   	# update myGP
-    mu_test,sig_test=localGP.gp_post_cache(xtrain,ytrain,xtest,ls=newls,alpha=1,sigma=1e-3)
-    mu_test=np.ravel(mu_test)
-    # normalise mu_test
-    idx_all=np.random.choice(len(xtest), batch_size, mu_test)
-        
-    return xtest[idx_all],idx_all
-
-
-def GP_BUCB(myGP,xtrain,ytrain,xtest,modelp,newls,batch_size=5):
-    # Kriging Believer, Constant Liar for Batch BO
-    # minimisation problem
-
-    def LCB(mu,sigma):
-        mu=np.reshape(mu,(-1,1))
-        sigma=np.reshape(sigma,(-1,1))
-        beta_t=2*np.log(100)
-        return mu-beta_t*sigma
-    
-    x_t_all=[0]*batch_size
-    idx_all=[]
-    
-    localGP=copy.deepcopy(myGP)   	# update myGP
-
-    for bb in range(batch_size):
-        # update xtrain, ytrain
-        data = Namespace()
-        data.X = xtrain
-        data.y = ytrain
-        
-        localGP.set_data(data)
-
-        mu_test,sig_test=localGP.gp_post_cache(xtrain,ytrain,xtest,ls=newls,alpha=1,sigma=1e-3)
-                
-        acq_value=LCB(mu_test,np.diag(sig_test))
-        idxbest=np.argmin(acq_value )
-        
-        idx_all=np.append(idx_all,idxbest)
-        x_t=xtest[idxbest]
-        x_t_all[bb]=x_t
-        
-        xtrain=np.append(xtrain,x_t)
-        ytrain=np.append(ytrain,mu_test[idxbest])
-        
-    return x_t_all,idx_all
-
 
 def GP_KDPP_Quality(myGP,xtrain,ytrain,xtest,newls,batch_size=5) :
 # KDPP for sampling diverse + quality items
 
     localGP=copy.deepcopy(myGP)
+    #data = Namespace()
+    #data.X = xtrain
+    #data.y = ytrain
+    #localGP.set_data(data)
     N=len(xtest)
     mu_test,sig_test=localGP.gp_post(xtrain,ytrain,xtest,ls=newls,alpha=1,sigma=1e-3)
     
@@ -233,36 +133,29 @@ def GP_KDPP_Quality(myGP,xtrain,ytrain,xtest,newls,batch_size=5) :
     x_t_all=[ xtest[ii] for ii in dpp_sample]
     return x_t_all,dpp_sample
 
-def GP_KDPP(myGP,xtrain,ytrain,xtest,newls,batch_size=5) :
-# KDPP for sampling diverse + quality items
+# def GP_KDPP(myGP,xtrain,ytrain,xtest,newls,batch_size=5) :
+# # KDPP for sampling diverse + quality items
 
-    localGP=copy.deepcopy(myGP)
-    mu_test,sig_test=localGP.gp_post(xtrain,ytrain,xtest,ls=newls,alpha=1,sigma=1e-3)
+#     localGP=copy.deepcopy(myGP)
+#     mu_test,sig_test=localGP.gp_post(xtrain,ytrain,xtest,ls=newls,alpha=1,sigma=1e-3)
     
-    #qualityK=np.zeros((N,N))+np.eye(N)*mu_test.reshape((-1,1))
+#     #qualityK=np.zeros((N,N))+np.eye(N)*mu_test.reshape((-1,1))
 
-    L=sig_test
-	
-	# decompose it into eigenvalues and eigenvectors
-    vals, vecs = decompose_kernel(L)
+#     L=sig_test
+# 	
+# 	# decompose it into eigenvalues and eigenvectors
+#     vals, vecs = decompose_kernel(L)
 
-    dpp_sample = sample_dpp(vals, vecs, k=batch_size)
-    x_t_all=[ xtest[ii] for ii in dpp_sample]
-    return x_t_all,dpp_sample
+#     dpp_sample = sample_dpp(vals, vecs, k=batch_size)
+#     x_t_all=[ xtest[ii] for ii in dpp_sample]
+#     return x_t_all,dpp_sample
 
 def optimize_GP_hyper(myGP,xtrain,ytrain,distance):
-    if distance=="tw_3_distance" or distance =="tw_distance":
+    # optimizing the GP hyperparameters
+    if distance =="tw_distance" or distance=="tw_2_distance" or distance=="tw_2g_distance":
         newls=myGP.optimise_gp_hyperparameter_v3(xtrain,ytrain,alpha=1,sigma=1e-4)
-        #mu_train,sig_train=myGP.gp_post_v3(xtrain,ytrain,xtrain,ls=newls,alpha=1,sigma=1e-4)
-        #mu_test,sig_test=myGP.gp_post_v3(xtrain,ytrain,xtest,ls=newls,alpha=1,sigma=1e-4)
-    elif distance=="tw_2_distance" or distance=="tw_2g_distance":
-        newls=myGP.optimise_gp_hyperparameter_v2(xtrain,ytrain,alpha=1,sigma=1e-4)
-        #mu_train,sig_train=myGP.gp_post_v3(xtrain,ytrain,xtrain,ls=newls,alpha=1,sigma=1e-4)
-        #mu_test,sig_test=myGP.gp_post_v3(xtrain,ytrain,xtest,ls=newls,alpha=1,sigma=1e-4)
     else:
         newls=myGP.optimise_gp_hyperparameter(xtrain,ytrain,alpha=1,sigma=1e-3)
-        #mu_train,sig_train=myGP.gp_post(xtrain,ytrain,xtrain,ls=newls,alpha=1,sigma=1e-3)
-        #mu_test,sig_test=myGP.gp_post(xtrain,ytrain,xtest,ls=newls,alpha=1,sigma=1e-3)
     return newls
     
 def gp_batch_bayesopt_search(search_space,
@@ -330,17 +223,9 @@ def gp_batch_bayesopt_search(search_space,
             newls=optimize_GP_hyper(myGP,xtrain,ytrain_scale,distance)
 
         # select a batch of candidate
-        if algo_name=="gp_bucb":
-            x_batch,idx_batch=GP_BUCB(myGP,xtrain,ytrain_scale,xtest,modelp,newls,batch_size) 
-        elif algo_name=="gp_kdpp":
-            x_batch,idx_batch=GP_KDPP(myGP,xtrain,ytrain_scale,xtest,newls,batch_size) 
-        elif algo_name=="gp_kdpp_quality":
-            x_batch,idx_batch=GP_KDPP_Quality(myGP,ytrain_scale,ytrain,xtest,newls,batch_size) 
-        elif algo_name=="gp_kdpp_rand":
-            idx_batch = np.random.choice( len(xtest), size=batch_size, replace=False)
-            x_batch=[xtest[ii] for ii in idx_batch]
-        elif algo_name=="gp_ts":
-            x_batch,idx_batch=GP_ThompsonSampling(myGP,xtrain,ytrain_scale,xtest,modelp,newls,batch_size) 
+      
+        x_batch,idx_batch=GP_KDPP_Quality(myGP,xtrain,ytrain_scale,xtest,newls,batch_size) 
+       
         # evaluate the black-box function
         for xt in x_batch:
             yt=fn(xt)

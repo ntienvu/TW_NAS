@@ -7,7 +7,7 @@ Created on Wed May 13 10:00:22 2020
 
 import numpy as np
 
-from numpy.random import permutation
+#from numpy.random import permutation
 from scipy.sparse.csgraph import shortest_path
 
 def AccumulateLayerOrder(u0, layerInfo):
@@ -100,7 +100,7 @@ def TW_OutDegrees_NASBENCH(MX, MY,layerX, layerY):
 #    v=v/np.sum(v)
     if np.sum(u)==0:
         u=np.ones(len(u))/len(u)
-        print(u)
+        #print(u)
     else:
         u=u/np.sum(u)
     if np.sum(v)==0:

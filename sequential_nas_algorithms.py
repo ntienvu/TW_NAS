@@ -8,13 +8,11 @@ import random
 import tensorflow as tf
 from argparse import Namespace
 
-from data import Data
+#from data import Data
 from acquisition_functions import acq_fn
 from meta_neural_net import MetaNeuralnet
-#from bo.bo.probo import ProBO
-#from bo.dom.list import ListDomain
+
 from bo.pp.pp_gp_my_distmat import MyGpDistmatPP
-#from argparse import Namespace
 from tqdm import tqdm
 
 def run_seq_nas_algorithm(search_space,algo_params, metann_params):
@@ -33,6 +31,7 @@ def run_seq_nas_algorithm(search_space,algo_params, metann_params):
         data = evolution_search(search_space, **ps)
     elif algo_name == 'bananas':
         mp = copy.deepcopy(metann_params)
+        _=mp.pop('search_space')
         data = bananas(search_space, mp, **ps)
     elif algo_name == 'gp_bayesopt':
         data = gp_bayesopt_search(search_space, **ps)
@@ -94,20 +93,6 @@ def random_search(search_space,
                                                 deterministic_loss=deterministic)
     
     
-    #top 10
-
-#    if search_space=="nasbench201":
-#        val_losses = [d[2] for d in data]
-#    else:
-#        val_losses = [np.asscalar(d[2]) for d in data]
-
-
-    #top_arches_idx = np.argsort(np.asarray(val_losses))[:10] # descending
-    #top_arches=[data[ii][0] for ii in top_arches_idx]
-
-    #pickle.dump([top_arches,val_losses], open( "10_best_architectures.p", "wb" ) )
-        
-    #print(val_losses[top_arches_idx[0]])
     if verbose:
         top_5_loss = sorted([d[2] for d in data])[:min(5, len(data))]
         print('Query {}, top 5 val losses {}'.format(total_queries, top_5_loss))   
@@ -211,7 +196,9 @@ def bananas(search_space, metann_params,
             meta_neuralnet = MetaNeuralnet()
             
             ps = copy.deepcopy(metann_params)
-            _ = ps.pop('search_space')
+            
+            
+            #_ = ps.pop('search_space')
 
             #train_error += meta_neuralnet.fit(xtrain, ytrain, **metann_params)
             train_error += meta_neuralnet.fit(xtrain, ytrain, **ps)
@@ -259,18 +246,8 @@ def selecting_next_architecture(mu_test,sig_test):
     return idxbest
 
 def optimize_GP_hyper(myGP,xtrain,ytrain,distance):
-    if distance=="tw_3_distance" or distance=="tw_distance":
-        newls=myGP.optimise_gp_hyperparameter_v3(xtrain,ytrain,alpha=1,sigma=1e-4)
-        #mu_train,sig_train=myGP.gp_post_v3(xtrain,ytrain,xtrain,ls=newls,alpha=1,sigma=1e-4)
-        #mu_test,sig_test=myGP.gp_post_v3(xtrain,ytrain,xtest,ls=newls,alpha=1,sigma=1e-4)
-    elif distance=="tw_2g_distance":
-        newls=myGP.optimise_gp_hyperparameter_v2(xtrain,ytrain,alpha=1,sigma=1e-4)
-        #mu_train,sig_train=myGP.gp_post_v3(xtrain,ytrain,xtrain,ls=newls,alpha=1,sigma=1e-4)
-        #mu_test,sig_test=myGP.gp_post_v3(xtrain,ytrain,xtest,ls=newls,alpha=1,sigma=1e-4)
-    else:
-        newls=myGP.optimise_gp_hyperparameter(xtrain,ytrain,alpha=1,sigma=1e-3)
-        #mu_train,sig_train=myGP.gp_post(xtrain,ytrain,xtrain,ls=newls,alpha=1,sigma=1e-3)
-        #mu_test,sig_test=myGP.gp_post(xtrain,ytrain,xtest,ls=newls,alpha=1,sigma=1e-3)
+    newls=myGP.optimise_gp_hyperparameter_v3(xtrain,ytrain,alpha=1,sigma=1e-3)
+
     return newls
     
 def gp_bayesopt_search(search_space,
@@ -342,7 +319,8 @@ def gp_bayesopt_search(search_space,
         xtrain=np.append(xtrain,xt)
         ytrain=np.append(ytrain,yt)
 
-                        
+        print(np.min(ytrain))
+
     # get the validation and test loss for all architectures chosen by BayesOpt
     results = []
     for arch in xtrain:

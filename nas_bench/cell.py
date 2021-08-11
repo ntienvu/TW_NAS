@@ -1,21 +1,23 @@
+import sys
+sys.path.insert(0,'..')
+sys.path.insert(0,'../../')
+
 import numpy as np
 import copy
-import itertools
 import random
 import ot
 from nasbench import api as nb101_api
-import time
+#import time
 from scipy.sparse.csgraph import shortest_path
+from nas_201_api import NASBench201API as API
 
-from tw_2g_v2b import TW_InDegrees_NASBENCH,TW_OutDegrees_NASBENCH,TW_2G_NB201
-from tw_2g_v2b import TW_2G_NB101,TW_Operations_NB101,TW_NASBENCH201,TW_NASBENCH101
-
+from tw_2g_v2b import TW_2G_NB201,TW_2G_NB101,TW_NASBENCH201,TW_NASBENCH101
+#from tw_2g_v2b import  TW_Operations_NB101, TW_InDegrees_NASBENCH,TW_OutDegrees_NASBENCH
 
 
 class Cell:
 
     def __init__(self, matrix, ops):
-
         self.matrix = matrix
         self.ops = ops
         self.get_infor()
@@ -55,10 +57,10 @@ class Cell:
         CONV1X1 = 'conv1x1-bn-relu'
         MAXPOOL3X3 = 'maxpool3x3'
         OPS = [CONV3X3, CONV1X1, MAXPOOL3X3]
-        OPS_2Gram=[]
+        #OPS_2Gram=[]
         NUM_VERTICES = 7
-        OP_SPOTS = NUM_VERTICES - 2
-        MAX_EDGES = 9
+        #OP_SPOTS = NUM_VERTICES - 2
+        #MAX_EDGES = 9
 
         while True:
             matrix = np.random.choice(
@@ -408,27 +410,6 @@ class Cell:
                 
         return count
 
-#    def tw_2gram_distance(self,other,lamb=0.5):
-#        MX=self.matrix
-#        MY=other.matrix
-#        
-#        # remove empty row
-#        #tempX=np.sum(MX,axis=1)
-#        #idx= np.argwhere(tempX).ravel()
-#        #opX=[self.ops[ii] for ii in idx]
-#
-#        #tempY=np.sum(MY,axis=1)
-#        #idx= np.argwhere(tempY).ravel()
-#        #opY=[other.ops[ii] for ii in idx]
-#        
-#        
-#        opX = self.count_operation_2gram(MX,self.ops)
-#        opY = self.count_operation_2gram(MY,other.ops)
-#        #print(opX,opY)
-#        dd=TW_v2_NB101(MX,MY,opX,opY)
-#    
-#        #print(dd)
-#        return dd
         
     def tw_2g_distance(self,other):
         MX=self.matrix
@@ -461,13 +442,21 @@ class Cell:
         return TW_2G_NB101(MX,MY,opX,opY,layerX,layerY) # return 3 elements
          
 
+dataset_nasbench201 = 'to_be_specified'
 
 class Cell_NB201(Cell):
+    
+    def set_dataset(dataset_nb201):
+        global dataset_nasbench201
+        dataset_nasbench201=dataset_nb201
+        print('dataset for nasbench201 is ',dataset_nasbench201)
+
 
     def __init__(self, matrix, ops):
         #self.dataset='cifar100'
         #self.dataset='ImageNet16-120'
-        self.dataset='cifar10'
+        self.dataset=dataset_nasbench201
+
         self.matrix = matrix
         self.ops = ops
         self.matrix = matrix
@@ -498,7 +487,7 @@ class Cell_NB201(Cell):
 
     def modelspec(self):
         print("not implemented")
-        return api.ModelSpec(matrix=self.matrix, ops=self.ops)
+        return API.ModelSpec(matrix=self.matrix, ops=self.ops)
 
     def Nas201_String_To_OpsMatrix(self,mystr):
     
@@ -556,10 +545,10 @@ class Cell_NB201(Cell):
         SKIPCONNECT='skip_connect'
         NONE='none'
         OPS = [CONV3X3, CONV1X1, AVEPOOL3X3,SKIPCONNECT,NONE]
-        OPS_2Gram=[]
+        #OPS_2Gram=[]
         NUM_VERTICES = 8
-        OP_SPOTS = NUM_VERTICES - 2
-        MAX_EDGES = 10
+        #OP_SPOTS = NUM_VERTICES - 2
+        #MAX_EDGES = 10
         
         matrix = np.random.choice(
             [0, 1], size=(NUM_VERTICES, NUM_VERTICES))
@@ -633,7 +622,7 @@ class Cell_NB201(Cell):
                         available = [op for op in self.OPS if op != new_ops[ind]]
                         new_ops[ind] = np.random.choice(available)
 
-                new_spec = api.ModelSpec(new_matrix, new_ops)
+                new_spec = API.ModelSpec(new_matrix, new_ops)
                 if nasbench.is_valid(new_spec):
                     break
         return {

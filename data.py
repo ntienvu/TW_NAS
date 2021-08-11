@@ -9,9 +9,12 @@ from nas_201_api import NASBench201API as API
 
 mysearchspace='A'
 
+
+
 class Data:
 
-    def __init__(self, search_space):
+    def __init__(self, search_space,dataset_nb201=None):
+        # dataset_nb201 is only used when search_space=nasbench201
         self.search_space = search_space
         global mysearchspace
         mysearchspace=search_space
@@ -21,13 +24,15 @@ class Data:
                 self.nasbench = nb101_api.NASBench('../nasbench_only108.tfrecord')
             except:
                 self.nasbench = nb101_api.NASBench('../../nasbench_only108.tfrecord')
-        if search_space == 'nasbench201':
+        if 'nasbench201' in search_space:
             try:
-                self.nasbench = API('../NAS-Bench-201-v1_1-096897.pth')
+                self.nasbench = API('../NAS-Bench-201-v1_1-096897.pth',verbose=False)
             except:
-                self.nasbench = API('NAS-Bench-201-v1_1-096897.pth')#e61699
+                self.nasbench = API('NAS-Bench-201-v1_1-096897.pth',verbose=False)#e61699
 #            self.nasbench = api.NASBench('../../NAS-Bench-201-v1_0-e61699.pth')
             #self.nasbench = api.NASBench('NAS-Bench-201-v1_0-e61699.pth')
+            
+            Cell_NB201.set_dataset(dataset_nb201)
             
         if search_space == 'nasbench_full':
             self.nasbench = nb101_api.NASBench('nasbench.tfrecord')
@@ -45,28 +50,28 @@ class Data:
         if 'nasbench' in self.search_space: #nasbench 101 and 201
             if arch is None:
                 
-                if self.search_space=='nasbench201':
+                if 'nasbench201' in self.search_space:
                     arch = Cell_NB201.random_cell(nasbench=self.nasbench)
                 else:
                     arch = Cell.random_cell(nasbench=self.nasbench)
             if encode_paths:
-                if self.search_space=='nasbench201':
+                if 'nasbench201' in self.search_space:
                     encoding = Cell_NB201(**arch).encode_paths()
                 else:
                     encoding = Cell(**arch).encode_paths()
             else:
-                if self.search_space=='nasbench201':
+                if 'nasbench201' in self.search_space:
                     encoding = Cell_NB201(**arch).encode_cell()
                 else:
                     encoding = Cell(**arch).encode_cell()
 
             if train:
-                if self.search_space=='nasbench201':
+                if 'nasbench201' in self.search_space:
                     val_loss = Cell_NB201(**arch).get_val_loss(self.nasbench)
                 else:
                     val_loss = Cell(**arch).get_val_loss(self.nasbench, deterministic)
                     
-                if self.search_space=='nasbench201':
+                if 'nasbench201' in self.search_space:
                     test_loss = Cell_NB201(**arch).get_test_loss(self.nasbench)
                 else:
                     test_loss = Cell(**arch).get_test_loss(self.nasbench)
@@ -90,7 +95,7 @@ class Data:
 
     def mutate_arch(self, arch, mutation_rate=1.0):
         if 'nasbench' in self.search_space:
-            if self.search_space=='nasbench201':
+            if 'nasbench201' in self.search_space:
                 return Cell_NB201(**arch).mutate(self.nasbench, mutation_rate)
             else:
                 return Cell(**arch).mutate(self.nasbench, mutation_rate)
@@ -99,7 +104,7 @@ class Data:
         
     def perturb_arch(self, arch, edits=1.0):
         if 'nasbench' in self.search_space:
-            if self.search_space=='nasbench201':
+            if 'nasbench201' in self.search_space:
                 return Cell_NB201(**arch).perturb(self.nasbench,int(edits))
             else:
                 return Cell(**arch).perturb(self.nasbench,int(edits))
@@ -108,7 +113,7 @@ class Data:
 
     def get_path_indices(self, arch):
         if 'nasbench' in self.search_space:
-            if self.search_space=='nasbench201':
+            if 'nasbench201' in self.search_space:
                 return Cell_NB201(**arch).get_path_indices()
 
             else:
@@ -323,7 +328,7 @@ class Data:
         # perturb the best k architectures    
         dic = {}
         for archtuple in xtrain:
-            if self.search_space=='nasbench201':
+            if 'nasbench201' in self.search_space:
                 path_indices = Cell_NB201(**archtuple).get_path_indices()
             else:
                 path_indices = Cell(**archtuple).get_path_indices()
@@ -333,13 +338,13 @@ class Data:
         for arch in top_arches:
             for _ in range(num_repeats):
                 #mutated = search_space.mutate_arch(data[best_index][0], mutation_rate)
-                if self.search_space=='nasbench201':
+                if 'nasbench201' in self.search_space:
                     mutation = Cell_NB201(**arch).mutate(self.nasbench, mutation_rate=1.0)
                 else:
                     mutation = Cell(**arch).mutate(self.nasbench, mutation_rate=1.0)
 
                 #perturbation = Cell(**arch).perturb(self.nasbench, edits)
-                if self.search_space=='nasbench201':
+                if 'nasbench201' in self.search_space:
                     path_indices = Cell_NB201(**mutation).get_path_indices()
                 else:
                     path_indices = Cell(**mutation).get_path_indices()
@@ -353,7 +358,7 @@ class Data:
         while len(new_arch_list) == 0:
             for _ in range(100):
                 
-                if self.search_space=='nasbench201':
+                if 'nasbench201' in self.search_space:
                     arch = Cell_NB201.random_cell(self.nasbench)
                 else:
                     arch = Cell.random_cell(self.nasbench)
@@ -369,28 +374,23 @@ class Data:
     def generate_distance_matrix(cls, arches_1, arches_2, distance):
         matrix = np.zeros([len(arches_1), len(arches_2)])
         
-        if mysearchspace=="nasbench201":
+        if "nasbench201" in mysearchspace:
             for i, arch_1 in enumerate(arches_1):
                 for j in range(len(arches_2)):
                     arch_2=arches_2[j]
                     if distance == 'edit_distance':
                         matrix[i][j] = Cell_NB201(**arch_1).edit_distance(Cell_NB201(**arch_2))
                     elif distance == 'path_distance':
-                        matrix[i][j] = Cell_NB201(**arch_1).path_distance(Cell_NB201(**arch_2))        
+                        matrix[i][j] = Cell_NB201(**arch_1).path_distance(Cell_NB201(**arch_2))      
                     elif distance == 'nasbot_distance': # neural architecture search BO
-                        matrix[i][j] = Cell_NB201(**arch_1).nasbot_distance(Cell_NB201(**arch_2))        
+                        matrix[i][j] = Cell_NB201(**arch_1).nasbot_distance(Cell_NB201(**arch_2))     
                     elif distance == 'gwot_distance': # Gromov Wasserstein + OT from NASBOT
-                        matrix[i][j] = Cell_NB201(**arch_1).gwot_distance(Cell_NB201(**arch_2))   
+                        matrix[i][j] = Cell_NB201(**arch_1).gwot_distance(Cell_NB201(**arch_2)) 
                     elif distance == 'gw_distance': # Gromov Wasserstein
-                        matrix[i][j] = Cell_NB201(**arch_1).gw_distance(Cell_NB201(**arch_2))  
-#                    elif distance == 'tw_distance': # Tree Wasserstein
-#                        matrix[i][j] = Cell_NB201(**arch_1).tw_distance(Cell_NB201(**arch_2))  
-#                    elif distance == 'tw_2g_distance': # Tree Wasserstein
-#                        matrix[i][j] = Cell_NB201(**arch_1).tw_2gram_distance(Cell_NB201(**arch_2)) 
+                        matrix[i][j] = Cell_NB201(**arch_1).gw_distance(Cell_NB201(**arch_2))
                     elif distance == 'ot_distance': # OT EMD
-                        matrix[i][j] = Cell_NB201(**arch_1).ot_distance(Cell_NB201(**arch_2)) 
-                    #elif distance == 'tw_3_distance': # Tree Wasserstein
-                        #matrix[i][j] = Cell(**arch_1).tw_3_distance(Cell(**arch_2)) 
+                        matrix[i][j] = Cell_NB201(**arch_1).ot_distance(Cell_NB201(**arch_2))
+
                     else:
                         print('{} is an invalid distance'.format(distance))
                         sys.exit()
@@ -408,10 +408,6 @@ class Data:
                         matrix[i][j] = Cell(**arch_1).gwot_distance(Cell(**arch_2))   
                     elif distance == 'gw_distance': # Gromov Wasserstein
                         matrix[i][j] = Cell(**arch_1).gw_distance(Cell(**arch_2))  
-#                    elif distance == 'tw_distance': # Tree Wasserstein
-#                        matrix[i][j] = Cell(**arch_1).tw_distance(Cell(**arch_2))  
-#                    elif distance == 'tw_2g_distance': # Tree Wasserstein
-#                        matrix[i][j] = Cell(**arch_1).tw_2gram_distance(Cell(**arch_2)) 
                     elif distance == 'ot_distance': # OT EMD
                         matrix[i][j] = Cell(**arch_1).ot_distance(Cell(**arch_2)) 
                     #elif distance == 'tw_3_distance': # Tree Wasserstein
@@ -430,31 +426,29 @@ class Data:
         matrix2 = np.zeros([len(arches_1), len(arches_2)])
         matrix3 = np.zeros([len(arches_1), len(arches_2)])
         
-        if mysearchspace=="nasbench201":
+        if "nasbench201" in mysearchspace:
              for i, arch_1 in enumerate(arches_1):
                  for j in range(len(arches_2)):
                     arch_2=arches_2[j]
-                    if distance=='tw_distance':
-                        matrix1[i][j],matrix2[i][j],matrix3[i][j] = Cell_NB201(**arch_1).tw_distance(Cell_NB201(**arch_2)) 
+                    if distance=='tw_distance': # Tree Wasserstein 1-Gram
+                        matrix1[i][j],matrix2[i][j],matrix3[i][j] = Cell_NB201(**arch_1).tw_distance(Cell_NB201(**arch_2))
 
-                    elif 'tw' in distance: # Tree Wasserstein
-                        matrix1[i][j],matrix2[i][j],matrix3[i][j] = Cell_NB201(**arch_1).tw_2g_distance(Cell_NB201(**arch_2)) 
+                    elif 'tw' in distance: # Tree Wasserstein 2-Gram
+                        matrix1[i][j],matrix2[i][j],matrix3[i][j] = Cell_NB201(**arch_1).tw_2g_distance(Cell_NB201(**arch_2))
                     else:
                         print('{} is an invalid distance'.format(distance))
                         sys.exit()
-        else:
+        else: # nasbench101
                 
             for i, arch_1 in enumerate(arches_1):
                 for j in range(len(arches_2)):
                     arch_2=arches_2[j]
-                    if distance=='tw_distance':
+                    if distance=='tw_distance':# Tree Wasserstein 1-Gram
                         matrix1[i][j],matrix2[i][j],matrix3[i][j] = Cell(**arch_1).tw_distance(Cell(**arch_2)) 
-                    elif 'tw' in distance: # Tree Wasserstein
+                    elif 'tw' in distance: # Tree Wasserstein 2-Gram
                         matrix1[i][j],matrix2[i][j],matrix3[i][j] = Cell(**arch_1).tw_2g_distance(Cell(**arch_2)) 
                     else:
                         print('{} is an invalid distance'.format(distance))
                         sys.exit()
                     
-        #print("max, min value of matrix")
-        #print(np.max(matrix),np.min(matrix))
         return matrix1,matrix2,matrix3

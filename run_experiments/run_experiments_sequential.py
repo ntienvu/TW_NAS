@@ -10,7 +10,7 @@ import pickle
 import numpy as np
 
 from sequential_nas_algorithms import run_seq_nas_algorithm
-from batch_nas_algorithms import run_batch_nas_algorithm
+#from batch_nas_algorithms import run_batch_nas_algorithm
 from params import algo_params_seq,algo_params_batch,meta_neuralnet_params
 #from params import *
 from data import Data
@@ -19,15 +19,21 @@ def run_experiments(args, save_dir):
 
     from_trials=args.from_trials
     to_trials=args.to_trials
+    
     #trials = args.trials
-    out_file = args.output_filename
     metann_params = meta_neuralnet_params(args.search_space)
     alg_params = algo_params_seq(args.algo_params)
     num_algos = len(alg_params)
     logging.info(alg_params)
     
     ss = args.search_space
-    search_space = Data(ss)
+    
+    if 'nasbench201' in ss:
+        dataset_nb201=ss.split("_", 1)[1]
+    else:
+        dataset_nb201=None
+        
+    search_space = Data(ss,dataset_nb201)
     
     results_test = [0]*(to_trials-from_trials)
     results_val = [0]*(to_trials-from_trials)
@@ -55,11 +61,11 @@ def run_experiments(args, save_dir):
         algo_name=alg_params[j]['algo_name']
         if "gp" in alg_params[j]['algo_name']:
             distance=alg_params[j]['distance']
-            filename = os.path.join(save_dir, '{}_{}_{}_{}_{}_{}.pkl'.format(from_trials,to_trials,
-                                    out_file,algo_name,distance,args.search_space))
-        else:
             filename = os.path.join(save_dir, '{}_{}_{}_{}_{}.pkl'.format(from_trials,to_trials,
-                    out_file,algo_name,args.search_space))
+                                    algo_name,distance,args.search_space))
+        else:
+            filename = os.path.join(save_dir, '{}_{}_{}_{}.pkl'.format(from_trials,to_trials,
+                    algo_name,args.search_space))
         print('\n* Trial summary: (params, results, walltimes)')
         print(alg_params)
        
@@ -94,11 +100,11 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Args for Tree-Wasserstein and k-DPP quality experiments')
     parser.add_argument('--from_trials', type=int, default=0, help='Starting trials index')
-    parser.add_argument('--to_trials', type=int, default=30, help='Ending trials index')
-    parser.add_argument('--search_space', type=str, default='nasbench201', \
-        help='nasbench or nasbench201')
+    parser.add_argument('--to_trials', type=int, default=5, help='Ending trials index')
+    parser.add_argument('--search_space', type=str, default='nasbench201_cifar100', \
+                    help='nasbench or nasbench201_cifar10 or nasbench201_cifar100 or nasbench201_ImageNet16-120')
     parser.add_argument('--algo_params', type=str, default='main_experiments', help='which parameters to use')
-    parser.add_argument('--output_filename', type=str, default='cifar100_200iters_v2b', help='name of output files')
+    #parser.add_argument('--output_filename', type=str, default='cifar100_200iters', help='name of output files')
     parser.add_argument('--save_dir', type=str, default=None, help='name of save directory')
    
     args = parser.parse_args()

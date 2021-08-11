@@ -3,16 +3,15 @@ import time
 import logging
 import sys
 sys.path.insert(0,'..')
-sys.path.insert(0,'../../')
+#sys.path.insert(0,'../../')
 
 import os
 import pickle
 import numpy as np
 from data import Data
-import copy
 from sequential_nas_algorithms import run_seq_nas_algorithm
 from batch_nas_algorithms import run_batch_nas_algorithm
-from params import *
+from params import algo_params_batch
 
 
 import warnings
@@ -22,7 +21,6 @@ def run_experiments(args, save_dir):
 
     from_trials=args.from_trials
     to_trials=args.to_trials
-    out_file = args.output_filename
     alg_params = algo_params_batch(args.algo_params)
 
     num_algos = len(alg_params)
@@ -30,7 +28,13 @@ def run_experiments(args, save_dir):
 
 	# set up search space
     ss = args.search_space
-    search_space = Data(ss)
+    
+    if 'nasbench201' in ss:
+        dataset_nb201=ss.split("_", 1)[1]
+    else:
+        dataset_nb201=None
+
+    search_space = Data(ss,dataset_nb201)
 
     results_test = [0]*(to_trials-from_trials)
     results_val = [0]*(to_trials-from_trials)
@@ -59,11 +63,11 @@ def run_experiments(args, save_dir):
         batch_size=alg_params[j]['batch_size']
         if "gp" in alg_params[j]['algo_name']:
             distance=alg_params[j]['distance']
-            filename = os.path.join(save_dir, '{}_{}_B_{}_{}_{}_{}_{}.pkl'.format(from_trials,to_trials,batch_size,
-                                    out_file,algo_name,distance,args.search_space))
+            filename = os.path.join(save_dir, '{}_{}_B_{}_{}_{}_{}.pkl'.format(from_trials,to_trials,batch_size,
+                                    algo_name,distance,args.search_space))
         else:
-            filename = os.path.join(save_dir, '{}_{}_B_{}_{}_{}_{}.pkl'.format(from_trials,to_trials,
-                    batch_size,out_file,algo_name,args.search_space))
+            filename = os.path.join(save_dir, '{}_{}_B_{}_{}_{}.pkl'.format(from_trials,to_trials,
+                    batch_size,algo_name,args.search_space))
         print('\n* Trial summary: (params, results, walltimes)')
         print(alg_params)
         #print(metann_params)
@@ -98,11 +102,11 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Args for Tree-Wasserstein and k-DPP quality experiments')
     parser.add_argument('--from_trials', type=int, default=0, help='Starting trials index')
-    parser.add_argument('--to_trials', type=int, default=2, help='Ending trials index')
+    parser.add_argument('--to_trials', type=int, default=5, help='Ending trials index')
     parser.add_argument('--search_space', type=str, default='nasbench', \
-        help='nasbench or nasbench201')
+                    help='nasbench or nasbench201_cifar10 or nasbench201_cifar100 or nasbench201_ImageNet16-120')
     parser.add_argument('--algo_params', type=str, default='main_experiments', help='which parameters to use')
-    parser.add_argument('--output_filename', type=str, default='imagenet_100iters', help='name of output files')
+    #parser.add_argument('--output_filename', type=str, default='', help='name of output files')
     parser.add_argument('--save_dir', type=str, default=None, help='name of save directory')
     
     args = parser.parse_args()

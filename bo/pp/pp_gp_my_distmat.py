@@ -3,15 +3,13 @@ Classes for GP models without any PP backend, using a given distance matrix.
 """
 
 from argparse import Namespace
-import time
 import copy
 import numpy as np
-from scipy.spatial.distance import cdist 
 from bo.pp.pp_core import DiscPP
 from bo.pp.gp.gp_utils import kern_exp_quad, kern_matern32, \
   get_cholesky_decomp, solve_upper_triangular, solve_lower_triangular, \
   sample_mvn, squared_euc_distmat, kern_distmat
-from bo.util.print_utils import suppress_stdout_stderr
+#from bo.util.print_utils import suppress_stdout_stderr
 import scipy
 from scipy.optimize import minimize
 
@@ -205,7 +203,7 @@ class MyGpDistmatPP(DiscPP):
         if llk>=best_llk:
             best_llk,best_theta=llk,res.x
 
-    print(best_theta,best_llk)
+    print("estimated theta",best_theta,"Log marginal llk",best_llk)
     return best_theta
 
   def optimise_gp_hyperparameter_v2(self,X,y,alpha,sigma):
