@@ -28,10 +28,6 @@ IsLog=0
 
 
 
-
-fig, ax = plt.subplots(figsize=(6,6), constrained_layout=True)
-
-
    
 def Smooth(y,w=5):
     y=list(y)
@@ -73,72 +69,69 @@ def LoadResult(filename,IsLog=IsLog,Scale_Std=Scale_Std,B=1):
     
     return res_mean_val[::B],res_std_val[::B],res_mean_test[::B],res_std_test[::B]
 
-search_space='nasbench201_cifar100'
-#search_space='nasbench201_cifar10'
-search_space='nasbench201_ImageNet16-120'
 
-#search_space='nasbench'
+search_space_list=['nasbench','nasbench201_ImageNet16-120','nasbench201_cifar10','nasbench201_cifar100']
 
+for search_space in search_space_list:
 
-
-
-method='random'
-filename="main_experiments/0_5_{:s}_{:s}.pkl".format(method,search_space)
-[res_mean_val,res_std_val,res_mean_test,res_std_test]=LoadResult(filename)
-plt.errorbar(range(0,len(res_mean_test)),res_mean_test,res_std_test,markevery=2,color='m',marker='s',label=method,alpha=0.5)
+    fig, ax = plt.subplots(figsize=(6,6), constrained_layout=True)
 
 
-
-method='evolution'
-filename="main_experiments/0_5_{:s}_{:s}.pkl".format(method,search_space)
-[res_mean_val,res_std_val,res_mean_test,res_std_test]=LoadResult(filename)
-plt.errorbar(range(0,len(res_mean_test)),res_mean_test,res_std_test,markevery=2,color='b',linestyle='-.',marker='>',label=method,alpha=0.5)
-
-
-
-method='bananas'
-filename="main_experiments/0_5_{:s}_{:s}.pkl".format(method,search_space)
-[res_mean_val,res_std_val,res_mean_test,res_std_test]=LoadResult(filename)
-plt.errorbar(range(0,len(res_mean_test)),res_mean_test,res_std_test,color='g',marker='P',label="Bananas",alpha=0.5)
-
-
-
-method='gp_bayesopt_tw_distance'
-filename="main_experiments/0_5_{:s}_{:s}.pkl".format(method,search_space)
-[res_mean_val,res_std_val,res_mean_test,res_std_test]=LoadResult(filename)
-plt.errorbar(range(0,len(res_mean_test)),res_mean_test,res_std_test,color='r',linestyle='-',marker='x',label="BO-TW",alpha=0.5)
-
-
-
-method='gp_bayesopt_tw_2g_distance'
-filename="main_experiments/0_5_{:s}_{:s}.pkl".format(method,search_space)
-[res_mean_val,res_std_val,res_mean_test,res_std_test]=LoadResult(filename)
-plt.errorbar(range(0,len(res_mean_test)),res_mean_test,res_std_test,color='k',linestyle='-',marker='x',label="BO-TW2G",alpha=0.5)
-
-
-
-
-
-
-plt.legend(prop={'size': 14},ncol=2)
-plt.ylabel('Test Error',fontsize=16)
-plt.xlabel('Iterations',fontsize=16)
-
-
-plt.title(search_space,fontsize=20)
-
+    method='random'
+    filename="main_experiments/0_5_{:s}_{:s}.pkl".format(method,search_space)
+    [res_mean_val,res_std_val,res_mean_test,res_std_test]=LoadResult(filename)
+    plt.errorbar(range(0,len(res_mean_test)),res_mean_test,res_std_test,markevery=2,color='m',marker='s',label=method,alpha=0.5)
     
-if search_space=='nasbench':
-    plt.ylim([5.7,6.7])
-
-else: # nasbench201
-    if 'cifar100' in search_space:
-        plt.ylim([38.5,43])    
-    elif 'cifar10' in search_space:
-        plt.ylim([10.8,14])    
-    elif 'ImageNet16-120' in search_space:
-        plt.ylim([62,67])   
+    
+    
+    method='evolution'
+    filename="main_experiments/0_5_{:s}_{:s}.pkl".format(method,search_space)
+    [res_mean_val,res_std_val,res_mean_test,res_std_test]=LoadResult(filename)
+    plt.errorbar(range(0,len(res_mean_test)),res_mean_test,res_std_test,markevery=2,color='b',linestyle='-.',marker='>',label=method,alpha=0.5)
+    
+    
+    
+    method='bananas'
+    filename="main_experiments/0_5_{:s}_{:s}.pkl".format(method,search_space)
+    [res_mean_val,res_std_val,res_mean_test,res_std_test]=LoadResult(filename)
+    plt.errorbar(range(0,len(res_mean_test)),res_mean_test,res_std_test,color='g',marker='P',label="Bananas",alpha=0.5)
+    
+    
+    
+    method='gp_bayesopt_tw_distance'
+    filename="main_experiments/0_5_{:s}_{:s}.pkl".format(method,search_space)
+    [res_mean_val,res_std_val,res_mean_test,res_std_test]=LoadResult(filename)
+    plt.errorbar(range(0,len(res_mean_test)),res_mean_test,res_std_test,color='r',linestyle='-',marker='x',label="BO-TW",alpha=0.5)
+    
+    
+    
+    method='gp_bayesopt_tw_2g_distance'
+    filename="main_experiments/0_5_{:s}_{:s}.pkl".format(method,search_space)
+    [res_mean_val,res_std_val,res_mean_test,res_std_test]=LoadResult(filename)
+    plt.errorbar(range(0,len(res_mean_test)),res_mean_test,res_std_test,color='k',linestyle='-',marker='x',label="BO-TW2G",alpha=0.5)
+    
+    
+    
+    
+    plt.legend(prop={'size': 14},ncol=2)
+    plt.ylabel('Test Error',fontsize=16)
+    plt.xlabel('Iterations',fontsize=16)
+    
+    
+    plt.title(search_space,fontsize=20)
+    
         
-strFile="fig/sequential_{:s}.png".format(search_space)
-plt.savefig(strFile)
+    if search_space=='nasbench':
+        plt.ylim([5.7,6.7])
+    
+    else: # nasbench201
+        if 'cifar100' in search_space:
+            plt.ylim([38.5,43])    
+        elif 'cifar10' in search_space:
+            plt.ylim([10.8,14])    
+        elif 'ImageNet16-120' in search_space:
+            plt.ylim([62,67])   
+            
+    strFile="fig/sequential_{:s}.png".format(search_space)
+    plt.savefig(strFile)
 

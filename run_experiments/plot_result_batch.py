@@ -117,6 +117,7 @@ for search_space in search_space_list:
             plt.ylim([62,67])    
 
     strFile="fig/batch_{:s}.png".format(search_space)
-    plt.savefig(strFile)
+    print(strFile)
+    fig.savefig(strFile)
 
 
