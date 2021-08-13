@@ -1,9 +1,12 @@
+<div align="center">
 
 # Optimal Transport Kernels for Sequential and Parallel Neural Architecture Search
 
 
 [![Paper](http://img.shields.io/badge/paper-arxiv.2006.07593-B31B1B.svg)](https://arxiv.org/abs/2006.07593)
 [![Conference](https://icml.cc/static/core/img/ICML-logo.svg)](https://icml.cc/Conferences/2021/ScheduleMultitrack?event=9843)
+</div>
+
 
 # Requirements
 - tensorflow == 1.14.0
