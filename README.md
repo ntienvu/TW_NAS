@@ -66,11 +66,6 @@ Examples of the results over 5 independent runs.
 
 
 
-# Paper and Presentation
-```
-https://arxiv.org/pdf/2006.07593.pdf
-```
-
 # Reference
 ```
 Vu Nguyen*, Tam Le*, Makoto Yamada, Michael A. Osborne.  "Optimal Transport Kernels for Sequential and Parallel Neural Architecture Search." International Conference on Machine Learning (ICML), 2021.
